@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
@@ -88,5 +88,20 @@ a
       resolve({status:true , mag:'logout successfully'})
      }) 
       })
+    }
+
+
+    async refreshTokens(userId: string, refreshToken?: any) {
+      const user = await this.userModel.findById(userId);
+      if (!user || !user.refreshToken)
+        throw new ForbiddenException('Access Denied');
+      const refreshTokenMatches = await this.jwtService.verify(
+        user.refreshToken,
+        refreshToken,
+      );
+      if (!refreshTokenMatches) throw new ForbiddenException('Access Denied');
+      const tokens = await this.getTokens(user);
+      await this.updateRefreshToken(user.id, tokens.refreshToken);
+      return tokens;
     }
 }
