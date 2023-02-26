@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { Request, Post, UseGuards, Body, Get } from '@nestjs/common/decorators';
+import { Request, Post, UseGuards, Body, Get ,Req, Param } from '@nestjs/common/decorators';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { userDto } from '../user/user.dto';
@@ -11,12 +11,13 @@ export class AuthController {
     @Post('/login')
     @UseGuards(AuthGuard('local'))
     async login(@Request() req) {
-      console.log(req.user);
-        return this.authService.getToken(req.user) 
+      let tokens = await this.authService.getTokens(req.user)
+      await this.authService.updateRefreshToken(req.user._id , tokens.refreshToken)
+      return tokens
     }
 
     @Post('/signup')      
-    async signup(@Body() userDto : userDto){
+    async signup(@Body() userDto : any){
       return this.authService.signup(userDto)
     }
 
@@ -24,5 +25,10 @@ export class AuthController {
     @UseGuards(AuthGuard("jwt"))
     async getuserdata(){
      return "this is  private route "
+    }
+
+    @Get('logout/:id')
+    logout(@Param('id') id: string) {
+     return this.authService.logout(id);
     }
 }       

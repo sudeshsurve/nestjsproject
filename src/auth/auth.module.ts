@@ -15,7 +15,6 @@ import { MailModule } from './mail/mail.module';
       MongooseModule.forFeature([{ name: "auth", schema: UserSchema }]),
         JwtModule.register({  
             secret: jwtConstants.secret,
-            signOptions: { expiresIn: '6000s' },
           }),
         MailModule,] , 
   controllers: [AuthController],
