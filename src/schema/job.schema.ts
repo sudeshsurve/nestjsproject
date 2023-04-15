@@ -24,11 +24,11 @@ export type jobDocument = job  & Document
 
 export const jobSchema  = SchemaFactory.createForClass(job)
 
-function populateuser(next :Function) {
-        this.populate({path :"Employer" , select : {name : 1 ,  email:1} })
-        next()   
-}
+// function populateuser(next :Function) {
+//         this.populate({path :"Employer" , select : {name : 1 ,  email:1} })
+//         next()   
+// }
 
-jobSchema.pre('find' , populateuser)
-jobSchema.pre('findOne' ,populateuser)
+// jobSchema.pre('find' , populateuser)
+// jobSchema.pre('findOne' ,populateuser)
 

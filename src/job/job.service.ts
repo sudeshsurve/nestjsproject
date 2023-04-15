@@ -24,7 +24,13 @@ export class JobService {
     async getAllJobs() {
         return new Promise(async(resolve, reject) => {
             try {   
-                const job = await this.jobModel.find()
+                const job = await this.jobModel.aggregate([{$lookup:
+                     {
+                      from:"users",
+                      localField: "Employer",
+                      foreignField: "_id",  
+                      as: "data"
+                    }}])
                 if (!job) {
                     throw new NotFoundException("Job not found")
                 }
@@ -49,10 +55,9 @@ export class JobService {
         }
     }
 
-    
-
-
-
-
-
+    // wing wwise query
+    // db.members.aggregate([{$group:{_id:"$propertyDetails.wing", members:{$push:{name:"$firstName"}}}}])
+    // getWing Wise members with full information
+    //  db.members.aggregate([{$group:{_id:"$propertyDetails.wing", members:{$push:"$$ROOT"}}}])
+        
 }
